@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sprint Pulse — Scrum Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Header / Sprint Pulse -->
+      <header class="header">
+        <div class="header-text">
+          <h1>SprintSync</h1>
+        </div>
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Toggle dark and light mode"
+          title="Toggle theme"
+        >
+          <svg
+            id="iconMoon"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg
+            id="iconSun"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            style="display: none"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
+          </svg>
+        </button>
+      </header>
+      <!-- Project details -->
+      <div class="project_details">
+        <div class="brand">
+          <div class="brand-mark">SP</div>
+          <div class="brand-text">
+            <h1>Project Nova</h1>
+            <p>Sprint 14</p>
+          </div>
+        </div>
+
+        <div class="goal-block">
+          <p class="goal-eyebrow">Sprint goal</p>
+          <p class="goal-text" id="sprintGoal">
+            Ship the redesigned checkout flow to the beta cohort and close out
+            payment-retry edge cases.
+          </p>
+        </div>
+
+        <div class="pulse">
+          <div class="pulse-ring">
+            <svg width="90" height="90" viewBox="0 0 74 74">
+              <circle class="pulse-ring-track" cx="37" cy="37" r="31"></circle>
+              <circle
+                id="ringFill"
+                class="pulse-ring-fill"
+                cx="37"
+                cy="37"
+                r="31"
+              ></circle>
+            </svg>
+            <div class="pulse-ring-label">
+              <b id="daysLeft">4</b>
+              <span>days left</span>
+            </div>
+          </div>
+          <div class="pulse-stats">
+            <div class="pulse-spark">
+              <svg
+                id="sparkline"
+                width="90"
+                height="26"
+                viewBox="0 0 90 26"
+              ></svg>
+            </div>
+            <div class="pulse-metric">
+              <b id="velocityNum">32</b> / 45 pts burned
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search tasks…" />
+        </div>
+        <select id="filterAssignee">
+          <option value="">All assignees</option>
+        </select>
+        <select id="filterPriority">
+          <option value="">All priorities</option>
+          <option value="high">High priority</option>
+          <option value="med">Medium priority</option>
+          <option value="low">Low priority</option>
+        </select>
+        <button class="btn-primary" id="openModalBtn">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Add task
+        </button>
+      </div>
+
+      <!-- Mobile column tabs -->
+      <div class="col-tabs" id="colTabs"></div>
+
+      <div class="layout">
+        <div class="board" id="board"></div>
+
+        <aside class="team-rail" id="teamRail">
+          <h3>Team workload</h3>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Add task modal -->
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal">
+        <h2>Add a task</h2>
+        <div class="field">
+          <label>Title</label>
+          <input
+            type="text"
+            id="newTitle"
+            placeholder="e.g. Fix retry loop on payment webhook"
+          />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Assignee</label>
+            <select id="newAssignee"></select>
+          </div>
+          <div class="field">
+            <label>Points</label>
+            <select id="newPoints">
+              <option>1</option>
+              <option>2</option>
+              <option selected>3</option>
+              <option>5</option>
+              <option>8</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Priority</label>
+            <select id="newPriority">
+              <option value="low">Low</option>
+              <option value="med" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Column</label>
+            <select id="newColumn"></select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" id="cancelModalBtn">Cancel</button>
+          <button class="btn-primary" id="saveTaskBtn" style="margin-left: 0">
+            Save task
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
